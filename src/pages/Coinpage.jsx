@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { SingleCoin } from "../config/api";
 import { CryptoState } from "../CryptoContext";
-import { makeStyles, Typography } from "@material-ui/core";
+import { makeStyles, Typography, LinearProgress } from "@material-ui/core";
 import CoinInfo from "../components/CoinInfo";
 import ReactHtmlParser from "react-html-parser";
 import numberWithCommas from "../helpers/numberWithCommas";
@@ -40,6 +40,24 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 15,
     paddingTop: 10,
     textAlign: "justify"
+  },
+  marketData: {
+    alignSelf: "start",
+    padding: 25,
+    paddingTop: 10,
+    width: "100%",
+    //Making responsive
+    [theme.breakpoints.down("md")]: {
+      display: "flex",
+      justifyContent: "space-around"
+    },
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    [theme.breakpoints.down("xs")]: {
+      alignItems: "start"
+    }
   }
 }));
 
@@ -59,6 +77,8 @@ const Coinpage = () => {
   }, [currency]);
 
   const classes = useStyles();
+
+  if (!coin) return <LinearProgress style={{ backgroundColor: "gold" }} />;
   return (
     <div className={classes.container}>
       <div className={classes.sidebar}>
@@ -108,7 +128,7 @@ const Coinpage = () => {
           </span>
           <span style={{ display: "flex" }}>
             <Typography variant="h5" className={classes.heading}>
-              Rank:
+              Market Cap:{" "}
             </Typography>
             &nbsp; &nbsp;
             <Typography
@@ -117,7 +137,13 @@ const Coinpage = () => {
                 fontFamily: "Montserrat"
               }}
             >
-              {coin?.market_cap_rank}
+              {symbol}
+              {numberWithCommas(
+                coin?.market_data.market_cap[currency.toLowerCase()]
+                  .toString()
+                  .slice(0, -6)
+              )}
+              M
             </Typography>
           </span>
         </div>
